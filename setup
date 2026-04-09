@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# wiki-compiler setup — register skills with Claude Code
+set -e
+
+INSTALL_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+SKILLS_DIR="$HOME/.claude/skills"
+
+# Helper: link a skill directory
+link_skill() {
+  local source_dir="$1"   # e.g., wiki-compiler or wiki-compiler/wiki-dream
+  local skill_name="$2"  # e.g., wiki-compiler or wiki-dream
+  local target_dir="$SKILLS_DIR/$skill_name"
+
+  if [ -L "$target_dir" ]; then
+    rm -f "$target_dir"
+  elif [ -d "$target_dir" ]; then
+    rm -rf "$target_dir"
+  fi
+
+  mkdir -p "$target_dir"
+  ln -snf "$INSTALL_DIR/$source_dir/SKILL.md" "$target_dir/SKILL.md"
+  echo "  linked: $skill_name"
+}
+
+echo "Wiki Compiler 安装脚本"
+echo ""
+
+# Create skills discovery directory
+mkdir -p "$SKILLS_DIR"
+
+# Link each skill
+link_skill "wiki-compiler" "wiki-compiler"
+link_skill "wiki-dream" "wiki-dream"
+link_skill "wiki-weaver" "wiki-weaver"
+
+echo ""
+echo "安装完成！可用技能："
+echo "  /wiki-compiler  — 增量编译"
+echo "  /wiki-dream     — 沉思/做梦"
+echo "  /wiki-weaver    — Map-Reduce 综述"
